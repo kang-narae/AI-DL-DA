@@ -7,11 +7,11 @@ import time
 def crawl_title():
     try:
 
-        title = driver.find_element_by_xpath('//*[@id="section_body"]/ul[{}]/li[{}]/dl/dt[2]/a'.format(j, i)).text
-        title = re.compile('[^가-힣a-zA-Z ]').sub(' ', title)
-        title_list.append(title)
+        title = driver.find_element_by_xpath('//*[@id="section_body"]/ul[{}]/li[{}]/dl/dt[2]/a'.format(j, i)).text  # 이요소 찾아서
+        title = re.compile('[^가-힣a-zA-Z ]').sub(' ', title)   #제목에서 문자만 뽑고 나머지는 띄어쓰기로 바꾸고
+        title_list.append(title)   # title_list에 더해라.
     except NoSuchElementException:
-        print('NoSuchElementException')
+        print('NoSuchElementException')   #없으면 말고
 
 
 option = webdriver.ChromeOptions()
@@ -22,8 +22,8 @@ option.add_argument('--no-sandbox')   #이 아래 3개는 맥 어쩌고에서 �
 option.add_argument('--disable-dev-shm-usage')
 option.add_argument('disable-gpu')
 
-driver= webdriver.Chrome('./chromedriver', options = option)
-driver.implicitly_wait(10)
+driver= webdriver.Chrome('./chromedriver', options = option)   #드라이버 만들고
+driver.implicitly_wait(10)   #이건 밀리세컨 단위랬나..
 
 
 category = ['Politics', 'Economic', 'Social',
@@ -32,32 +32,27 @@ category = ['Politics', 'Economic', 'Social',
 page_num = [140, 374, 486, 71, 76, 125]
 
 
-#https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=100#&date=%2000:00:00&page=1
-# //*[@id="section_body"]/ul[1]/li[1]/dl/dt[2]/a
-# //*[@id="section_body"]/ul[1]/li[2]/dl/dt[2]/a    ul 1~4 / li 1~5
-
-
 df_title = pd.DataFrame()
 
 for l in range(0,1):
     title_list = []
     for k in range(1, page_num[l]+1):
     # for k in range(1, 3):
-        url = 'https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=10{}#&date=%2000:00:00&page={}'.format(l, k)
+        url = 'https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=10{}#&date=%2000:00:00&page={}'.format(l, k)   
 
-        driver.get(url)
+        driver.get(url)   #드라이버로 url 들어가
         time.sleep(0.5)
-        for j in range(1, 5):
+        for j in range(1, 5):   
         # for j in range(1, 3):
             for i in range(1, 6):
             # for i in range(1, 3):
                 try:
-                    crawl_title()
-                except StaleElementReferenceException:
+                    crawl_title()   # 찾거나 없으면 말아 근데 이거 두개도 아니면
+                except StaleElementReferenceException:    # 아직안뜸 예외가 발생하면
                     # print('StaleElementReferenceException')
                     driver.get(url)
-                    time.sleep(0.5)
-                    crawl_title()
+                    time.sleep(0.5)   #좀 기다렸다가
+                    crawl_title()  #다시 크롤링해
                 except:
                     print('error')
 
